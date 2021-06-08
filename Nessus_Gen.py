@@ -41,13 +41,15 @@ def nessus_parse():
 
 def word(vulns):
     doc = docx.Document()
-    doc.add_paragraph("Hi")
+    doc.add_paragraph("Nessus Report for someone")
+    doc.add_page_break()
     for x,y in vulns.items():
         doc.add_paragraph(x)
         for z,aa in vulns[x].items():
-            doc.add_paragraph("{}\n\t{}".format(z,aa))
+            doc.add_paragraph("{}\n{}".format(z,aa))
         doc.add_page_break()
     doc.save("hello.docx")
+    print("[+] Docx creation completed!")
 
 def main():
     vulns = nessus_parse()
