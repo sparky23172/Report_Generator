@@ -12,7 +12,7 @@ def nessus_parse():
     root = tree.getroot()
 
     vulns = {}
-
+    count = 0
     for item in root:
         logging.debug("\n\nItem: {}-{}-{}".format(item.tag,item.attrib,item.text))
         for thing in item:
@@ -24,16 +24,17 @@ def nessus_parse():
                         logging.debug("\nHost: {}".format(thing.attrib["name"]))
                         logging.debug("Plugin Name: {}".format(idk.attrib["pluginName"]))
                         logging.debug("Severity: {}".format(idk.attrib["severity"]))
-                        vulns[str(thing.attrib["name"])] = {"Host":thing.attrib["name"],"PluginName":idk.attrib["pluginName"],"Severity":idk.attrib["severity"]}
+                        vulns["{}-{}".format(str(thing.attrib["name"]),count)] = {"Host":thing.attrib["name"],"PluginName":idk.attrib["pluginName"],"Severity":idk.attrib["severity"]}
                         for element in idk:
-                            if element.tag == "solution" or element.tag == "see_also" or element.tag == "plugin_output":
+                            if element.tag.lower() == "solution" or element.tag.lower() == "see_also" or element.tag.lower() == "plugin_output":
                                 try:
                                     logging.debug("Tag: {}".format(element.tag))
                                     logging.debug("Text: {}".format(element.text))
                                     logging.debug(thing.attrib["name"])
-                                    vulns[str(thing.attrib["name"])].update({element.tag:element.text})
+                                    vulns["{}-{}".format(str(thing.attrib["name"]),count)].update({element.tag:element.text})
                                 except UnicodeEncodeError:
                                     logging.debug("Text: ",element.text)
+                        count += 1
                 except KeyError:
                     continue
     return vulns
